@@ -1,46 +1,52 @@
 /// <reference types="cypress" />
 
-describe('Testes de Crud Contatos', () => {
+describe('Contact Management in Contacts Application', () => {
     
-    beforeEach(()=>{
-        cy.visit('https://agenda-contatos-react.vercel.app/')
-    })
+    const appUrl = 'https://agenda-contatos-react.vercel.app/';
+    const nameInputSelector = '[data-testid="contact-name-input"]';
+    const emailInputSelector = '[data-testid="contact-email-input"]';
+    const phoneInputSelector = '[data-testid="contact-phone-input"]';
+    const addButtonSelector = '[data-testid="add-contact-button"]';
+    const firstEditButtonSelector = '[data-testid="edit-first-contact-button"]';
+    const lastDeleteButtonSelector = '[data-testid="delete-last-contact-button"]';
+    const saveChangesButtonSelector = '[data-testid="save-changes-button"]';
 
-    it('deve testar o montagem da App', () => {
-        cy.get('header > h1').should('have.length.greaterThan', 0)
-        cy.get('form > input').should('have.length', 3)
-    })
+    beforeEach(() => {
+        cy.visit(appUrl);
+    });
 
-    it('deve incluir um novo contato', () => {
-        cy.get('[type="text"]').type('Leyser Erick Pinto Estrada')
-        cy.get('[type="email"]').type('leyserestrada@mailer.com')
-        cy.get('[type="tel"]').type('47 91000 1234')
-        cy.get('.adicionar').click()
-    })  
-    
-    it('deve ativar modo de edição', () => {
-        cy.get(':nth-child(2) > .sc-gueYoa > .edit').click()
-        cy.get('[type="text"]').should('have.length.greaterThan', 0)
-    })
+    it('should verify that the application initializes correctly', () => {
+        cy.get('header > h1').should('exist');
+        cy.get(nameInputSelector).should('exist');
+        cy.get(emailInputSelector).should('exist');
+        cy.get(phoneInputSelector).should('exist');
+    });
 
-    it('deve alterar o primeiro contato selecionado', () => {
-        cy.get('.edit').first().click()
+    it('should allow adding a new contact', () => {
+        cy.get(nameInputSelector).type('Lucas Ribeiro');
+        cy.get(emailInputSelector).type('lucasribeiro@gmai.com');
+        cy.get(phoneInputSelector).type('1=21 966896978');
+        cy.get(addButtonSelector).click();
+        // Verificar se o contato foi adicionado, se necessário
+    });
 
-        //Altera nome
-        cy.get('[type="text"]').clear()
-        cy.get('[type="text"]').type('Jasmielis Leysimar Pinto Estrada')
-        //Altera mail
-        cy.get('[type="email"]').clear()
-        cy.get('[type="email"]').type('jasmielisestrada@mailer.com')
-        //Altera telefone
-        cy.get('[type="tel"]').clear()
-        cy.get('[type="tel"]').type('47 91000 1234')
-        //Salva
-        cy.get('.alterar').click()
-    })
+    it('should enter edit mode for a contact', () => {
+        cy.get(firstEditButtonSelector).click();
+        cy.get(nameInputSelector).should('have.value', 'Lucas Ribeiro');
+        // Verifica se os outros campos estão preenchidos corretamente, se necessário
+    });
 
-    it('Deve apagar o ultimo contato', () => {
-        
-        cy.get('.delete').last().click()
-    })
-})
+    it('should edit the first contact', () => {
+        cy.get(firstEditButtonSelector).click();
+        cy.get(nameInputSelector).clear().type('Isabela france');
+        cy.get(emailInputSelector).clear().type('isabe@gmi.com');
+        cy.get(phoneInputSelector).clear().type('21 987585 89585');
+        cy.get(saveChangesButtonSelector).click();
+        // Verificar se o contato foi atualizado, se necessário
+    });
+
+    it('should delete the last contact', () => {
+        cy.get(lastDeleteButtonSelector).click();
+        // Verificar se o contato foi removido, se necessário
+    });
+});
